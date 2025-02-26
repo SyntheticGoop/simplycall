@@ -2,8 +2,23 @@
 	"name": "simplycall",
 	"license": "MIT",
 	"packageManager": "yarn@4.6.0",
+	"main": "./src/index.ts",
+	"files": [
+		"dist/**/*"
+	],
+	"publishConfig": {
+		"access": "public",
+		"main": "./dist/index.js",
+		"module": "./dist/index.mjs",
+		"type": "./dist/index.d.ts"
+	},
+	"scripts": {
+		"build": "tsup src/index.ts --dts --format esm,cjs",
+		"prepack": "yarn build"
+	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
+		"tsup": "^8.4.0",
 		"typescript": "^5.7.3"
 	}
 }
