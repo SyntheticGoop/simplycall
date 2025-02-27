@@ -4,6 +4,7 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   title: "simplycall",
   description: "Simplycall documentation",
+  base: "/simplycall",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [],
