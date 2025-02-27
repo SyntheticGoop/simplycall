@@ -77,6 +77,9 @@ export class Router<Context = void> {
        * Be careful in the selection of function argument types. Depending on
        * the serializer used, not all arguments types will be serializable.
        *
+       * The requirement for defining functions as object keys is a side effect
+       * of the requirement to accurately reflect function docstrings.
+       *
        * Examples
        * ```ts
        * .with({
@@ -180,7 +183,7 @@ export class Router<Context = void> {
    *
    * This function will never throw.
    */
-  public async routeFromTransport(rpc: {
+  public async routeFromTransportInfallibly(rpc: {
     /**
      * The context object to provide a route handler.
      */
@@ -248,9 +251,13 @@ export class Client<Context = undefined> {
       /**
        * Remote call function.
        *
+       * This function must always return the expected response or error.
+       * This property of throwing error on unexpected response is a
+       * side effect of accurate reflection of function docstrings.
+       *
        * @returns `unknown` The response from calling the remote function.
        */
-      sendThroughTransport(rpc: {
+      sendThroughTransportFallibly(rpc: {
         /**
          * The context object injected as part of each call.
          */
@@ -293,7 +300,7 @@ export class Client<Context = undefined> {
           /* v8 ignore next 1 */
           if (typeof prop !== "string") return;
           return (...args: unknown[]) =>
-            transport.sendThroughTransport({
+            transport.sendThroughTransportFallibly({
               id: `${scope} ${prop}`,
               args,
               // @ts-expect-error Typescript does not understand that when context extends undefined, Context === Context | undefined
