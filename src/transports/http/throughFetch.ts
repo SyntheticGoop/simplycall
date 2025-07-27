@@ -20,15 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { encode, decode } from "../../codec/formData";
+import { decode, encode } from "../../codec/formData";
 
 /**
  * Creates a transport that sends data over
  * http {@link fetch}.
  */
-export function makeTransportThroughFetch(config: {
-  url: URL;
-}) {
+export function makeTransportThroughFetch(config: { url: URL }) {
   return {
     async sendThroughTransportFallibly(rpc: {
       ctx: unknown;
@@ -43,19 +41,13 @@ export function makeTransportThroughFetch(config: {
         });
       }
 
-      await fetch(config.url, {
+      return await fetch(config.url, {
         headers: {
           "x-simplycall-id": rpc.id,
         },
         method: "POST",
         body: maybeFormBody.ok,
       }).then(async (result) => {
-        const argtype = result.headers.get("x-simplycall-argtype");
-        if (argtype !== "b" && argtype !== "j")
-          throw Error(
-            `Unable to parse response type [${argtype}] for [${rpc.id}].`,
-          );
-
         const formData = await result.formData(); // Allow errors to propagate
         const response = await decode(formData);
         if ("err" in response) {

@@ -36,7 +36,7 @@ export function makeTransportFromFetch<Context>(handler: {
     ctx: Context;
     id: string;
     args: unknown[];
-  }): Promise<{ err: Record<string, unknown> } | { ok: FormData }>;
+  }): Promise<{ err: Record<string, unknown> } | { ok: unknown }>;
 }) {
   return {
     /**
