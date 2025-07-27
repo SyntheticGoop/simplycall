@@ -20,8 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { decode } from "../../codec/formData/decode";
-import { encode } from "../../codec/formData/encode";
+import { decode, encode } from "../../codec/formData";
 
 /**
  * Create a transport that receives data from
@@ -37,7 +36,7 @@ export function makeTransportFromFetch<Context>(handler: {
     ctx: Context;
     id: string;
     args: unknown[];
-  }): Promise<{ err: Record<string, string> } | { ok: unknown }>;
+  }): Promise<{ err: Record<string, unknown> } | { ok: FormData }>;
 }) {
   return {
     /**
@@ -48,12 +47,13 @@ export function makeTransportFromFetch<Context>(handler: {
     async onRequestInfallibly(request: Request, ctx: Context) {
       const id = request.headers.get("x-simplycall-id");
 
-      if (typeof id !== "string")
+      if (typeof id !== "string") {
         return {
           err: {
             "id not provided": "",
           },
         };
+      }
 
       const maybeFormData = await request
         .formData()
@@ -77,9 +77,18 @@ export function makeTransportFromFetch<Context>(handler: {
 
       if ("err" in response) return response;
 
+      const body = encode(response.ok);
+
+      if ("err" in body)
+        return {
+          err: {
+            "encode error": body.err,
+          },
+        };
+
       return {
         ok: {
-          body: encode(response.ok),
+          body: body.ok,
         },
       };
     },
