@@ -142,16 +142,20 @@ Yet another library? Screw that.
 Here's the code in its full glory. To install, copy and paste it into your project.
 
 
-::: details Server router and Client
+::: details Shared Core Server and Client Router application
 <<< ../src/index.ts
 :::
 
-::: details Server transport
+::: details Server transport plugin to receive from a client and pass messages
 <<< ../src/transports/http/fromFetch.ts
 :::
 
-::: details Client transport
+::: details Client transport plugin to connect to an endpoint and pass messages
 <<< ../src/transports/http/throughFetch.ts
 :::
 
+::: details Codec used for serialization and deserialization
+<<< ../src/codec/formData.ts
+:::
 
+Now get started with hacking!
